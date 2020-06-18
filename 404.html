@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <title>Address Manager</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+</head>
+
+<body>
+  <app-root></app-root>
+  <!--Integrating with Google Maps-->
+  <script>
+    var map;
+    var service;
+    var infowindow;
+
+    function initMap() {
+      var mapElement = document.getElementById('map');
+      if (mapElement) {
+        var sl = new google.maps.LatLng(7.8731, 80.7718);
+        map = new google.maps.Map(mapElement, { center: sl, zoom: 7 });
+        infowindow = new google.maps.InfoWindow();
+
+        address = document.getElementById('mapAddress').value;
+
+        var request = {
+          query: address,
+          fields: ['name', 'geometry']
+        };
+
+        service = new google.maps.places.PlacesService(map);
+        service.findPlaceFromQuery(request, function (results, status) {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+            createMarker(results[0]);
+            map.setCenter(results[0].geometry.location);
+          }
+        });
+      }
+    }
+
+    function createMarker(place) {
+      var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+      });
+
+      google.maps.event.addListener(marker, 'click', function () {
+        infowindow.setContent(place.name);
+        infowindow.open(map, this);
+      });
+    }
+  </script>
+  <script defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3ExsyeR73iJuq0gOSX93MloXw1Xdy6OA&callback=initMap&libraries=places"
+    type="text/javascript"></script>
+<script type="text/javascript" src="runtime.js"></script><script type="text/javascript" src="polyfills.js"></script><script type="text/javascript" src="styles.js"></script><script type="text/javascript" src="vendor.js"></script><script type="text/javascript" src="main.js"></script></body>
+
+</html>
